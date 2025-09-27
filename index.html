@@ -1,13 +1,42 @@
 <html>
-  <body>
+  <head>
+    <style>
+      #wheel {
+        margin: 20px auto;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        border: 10px solid #ccc;
+        position: relative;
+        overflow: hidden;
+      }
+      .segment {
+        width: 50%;
+        height: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: 0% 0%;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+      }
+      #spinButton {
+        display: block;
+        margin: 20px auto;
+      }
+    </style>
+  </head>
+  <body style="background-color: rgb(246, 216, 221);">
     <div><center><h1 style="color: rgb(243, 60, 60)">To Do List ❤️</h1></center></div>
-        <div><span>Dada is stinkiest</span></div>
+        <div><span>Todo List</span></div>
     <div>
       <label for="task">Add a Task: </label>
       <input type="text" id="task" placeholder="Add a task">
       <button type="button" onclick="addTask()">Add</button>
+      <button type="button" onclick="pickRandomTask()">Pick a Random Task</button>
     </div>
     <ul id="taskList"></ul>
+    <div id="wheel"></div>
+    <button id="spinButton" type="button" onclick="spinWheel()">Spin the Wheel</button>
     <script>
       function addTask() {
         const taskInput = document.getElementById('task');
@@ -23,6 +52,44 @@
         taskList.appendChild(listItem);
 
         taskInput.value = '';
+      }
+
+      function pickRandomTask() {
+        const taskList = document.getElementById('taskList');
+        const tasks = taskList.getElementsByTagName('li');
+        if (tasks.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * tasks.length);
+        const randomTask = tasks[randomIndex].textContent;
+
+        alert(`Your random task is: ${randomTask}`);
+      }
+
+      function createWheel() {
+        const taskList = document.getElementById('taskList');
+        const tasks = taskList.getElementsByTagName('li');
+        const wheel = document.getElementById('wheel');
+        wheel.innerHTML = '';
+
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF5'];
+        const angle = 360 / tasks.length;
+
+        for (let i = 0; i < tasks.length; i++) {
+          const segment = document.createElement('div');
+          segment.className = 'segment';
+          segment.style.backgroundColor = colors[i % colors.length];
+          segment.style.transform = `rotate(${i * angle}deg) skewY(-60deg)`;
+          segment.textContent = tasks[i].textContent;
+          wheel.appendChild(segment);
+        }
+      }
+
+      function spinWheel() {
+        createWheel();
+        const wheel = document.getElementById('wheel');
+        const randomDegree = Math.floor(Math.random() * 360) + 360 * 3; // Spin at least 3 times
+        wheel.style.transition = 'transform 4s ease-out';
+        wheel.style.transform = `rotate(${randomDegree}deg)`;
       }
     </script>
   </body>
